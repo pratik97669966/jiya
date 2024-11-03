@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>❤️ Jiyaa ❤️</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            text-align: center;
+            background-color: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            margin: 20px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 30vh;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            resize: none;
+            box-sizing: border-box;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 20px;
+            }
+
+            button {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+
+            textarea {
+                height: 20vh;
+                /* 20% of viewport height */
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>❤️ Jiyaa ❤️</h1>
+        <textarea id="inputText" placeholder="Paste your text here..."></textarea>
+        <div class="buttons">
+            <button onclick="formatText()">Format Text</button>
+            <button onclick="clearAll()">Clear All</button>
+        </div>
+        <textarea id="outputText" readonly></textarea>
+        <div class="buttons">
+            <button onclick="copyText()">Copy Text</button>
+        </div>
+    </div>
+    <script>
+        function formatText() {
+            let inputText = document.getElementById('inputText').value;
+
+            // Capitalize the first letter of each word
+            inputText = inputText.replace(/\b\w/g, char => char.toUpperCase());
+
+            // Replace commas with "Comma"
+            let formattedText = inputText.replace(/,/g, " Comma");
+
+            // Replace specific words with mathematical symbols
+            const replacements = {
+                "Minus": "-",
+                "Plus": "+",
+                "Divide By": "/",
+                "Divided By": "/",
+                "Into": "*",
+                "Multiply": "*",
+                "\\bBy\\b": "/",
+                "Is Equals To": "=",
+                "Is Equal To": "=",
+                "Equals To": "=",
+                "Equal To": "=",
+                "Is To": ":",
+                "Percentage": "%",
+                "Smaller Than": "<",
+                "Less Than": "<",
+                "Greater Than": ">",
+                "Root Over": "√",
+                "Root": "√",
+                "Greater Than Equals To": "≥",
+                "Smaller Than Equals To": "≤",
+                "Less Than Equals To": "≤",
+                "Is Not Equal To": "≠",
+                "Not Equals To": "≠",
+                "Not Equal To": "≠",
+                "Infinity": "∞",
+                "Question Mark": "?"
+            };
+
+            for (let [key, value] of Object.entries(replacements)) {
+                let regex = new RegExp(key, 'g'); // Use 'g' for global replacement
+                formattedText = formattedText.replace(regex, value);
+            }
+
+            // Handle cases where specific words are followed directly by numbers
+            formattedText = formattedText.replace(/(equal to)(\d+)/gi, (match, word, number) => {
+                return word + ' ' + numberToWords(parseInt(number)); // Add a space between the word and number words
+            });
+
+            // Handle cases where letters are followed directly by numbers
+            formattedText = formattedText.replace(/([a-zA-Z]+)(\d+)/g, (match, letters, number) => {
+                return letters.charAt(0).toUpperCase() + letters.slice(1) + ' ' + numberToWords(parseInt(number));
+            });
+
+            // Replace numbers with words and capitalize the following letter
+            formattedText = formattedText.replace(/(\d+)(\w*)/g, (match, number, followingText) => {
+                let numberWords = numberToWords(parseInt(number));
+                let capitalizedFollowingText = followingText.charAt(0).toUpperCase() + followingText.slice(1);
+                return numberWords + ' ' + capitalizedFollowingText; // Added a space between the number words and the following text
+            });
+            // Capitalize the first letter of each word
+            inputText = inputText.replace(/\b\w/g, char => char.toUpperCase());
+            // Display the formatted text
+            document.getElementById('outputText').value = formattedText.trim();
+        }
+
+        function numberToWords(num) {
+            if (num === 0) return 'Zero';
+            if (num < 0) return 'Minus ' + numberToWords(-num);
+
+            const units = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+            const teens = ['Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+            const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+            let word = '';
+
+            if (num >= 100) {
+                word += units[Math.floor(num / 100)] + ' Hundred ';
+                num %= 100;
+            }
+
+            if (num >= 20) {
+                word += tens[Math.floor(num / 10)] + ' ';
+                num %= 10;
+            }
+
+            if (num >= 10) {
+                word += teens[num - 10] + ' ';
+            } else if (num > 0) {
+                word += units[num] + ' ';
+            }
+
+            return word.trim();
+        }
+
+        function copyText() {
+            let outputText = document.getElementById('outputText');
+            outputText.select();
+            outputText.setSelectionRange(0, 99999); // For mobile devices
+            document.execCommand("copy");
+        }
+
+        function clearAll() {
+            document.getElementById('inputText').value = '';
+            document.getElementById('outputText').value = '';
+        }
+    </script>
+</body>
+
+</html>
